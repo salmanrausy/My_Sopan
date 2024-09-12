@@ -1,4 +1,4 @@
-package com.example.my_sopan
+package com.example.my_sopan.view.splashscreen
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,11 +8,14 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import com.example.my_sopan.R
+import com.example.my_sopan.view.dashboard.DashboardActivity
+
 //import androidx.core.view.ViewCompat
 //import androidx.core.view.WindowInsetsCompat
 
 @Suppress("DEPRECATION")
-class MainActivity : AppCompatActivity() {
+class SplashActivity : AppCompatActivity() {
 
     //INI CLASS UNTUK SPLASHSCREEN
     //Deklarasi variabel timer splash muncul
