@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">My_Sopan</string>
+    <string name="add_image">add image!</string>
+    <string name="camera">Camera</string>
+    <string name="gallery">Gallery</string>
+    <string name="pilih_opsi_pengambilan_gambar">Pilih opsi pengambilan gambar :</string>
 </resources>
