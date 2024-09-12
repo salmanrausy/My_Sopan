@@ -29,6 +29,7 @@ class SplashActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         logo_splashScreen = findViewById(R.id.logoSplash)
+        text_namaAplikasi = findViewById(R.id.NamaAplikasi)
 
         supportActionBar?.hide()
         setAnimation()

@@ -33,8 +33,9 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-    viewBinding{
-        enable = true
+    buildFeatures {
+        viewBinding = true
+        mlModelBinding =  true
     }
 }
 
@@ -48,4 +49,13 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+//    Camera X Libs
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+
+//    TF-Lite
+    implementation(libs.org.tensorflow.lite.support)
+    implementation(libs.org.tensorflow.lite.metadata)
 }

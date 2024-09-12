@@ -7,4 +7,36 @@
     android:layout_height="match_parent"
     tools:context=".view.camera.CameraActivity">
 
+    <androidx.camera.view.PreviewView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/viewCamera"/>
+
+    <LinearLayout
+        android:id="@+id/group_button"
+        android:layout_width="match_parent"
+        android:layout_height="130dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@drawable/round_corner_top_transparent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" >
+
+        <ImageView
+            android:id="@+id/captureImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_camera_capture"
+            android:layout_marginStart="60dp"/>
+
+        <ImageView
+            android:layout_marginStart="40dp"
+            android:id="@+id/flipCamera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_flip_camera"/>
+
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
