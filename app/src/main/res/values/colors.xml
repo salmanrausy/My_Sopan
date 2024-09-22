@@ -8,5 +8,6 @@
     <color name="blue_700">#1976D2</color>
     <color name="red_200">#F06292</color>
     <color name="red_700">#AD1457</color>
+    <color name="red_900">#d00000</color>
     <color name="navi">#2D3D4F</color>
 </resources>
