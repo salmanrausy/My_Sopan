@@ -6,6 +6,7 @@ import android.os.Handler
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.example.my_sopan.R
@@ -21,6 +22,7 @@ class SplashActivity : AppCompatActivity() {
     //Deklarasi variabel timer splash muncul
     private val SPLASH_TIME_OUT:Long = 3500
     private lateinit var logo_splashScreen: ImageView
+    private lateinit var tv_copyright: TextView
     private lateinit var text_namaAplikasi:LinearLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,6 +32,8 @@ class SplashActivity : AppCompatActivity() {
 
         logo_splashScreen = findViewById(R.id.logoSplash)
         text_namaAplikasi = findViewById(R.id.NamaAplikasi)
+        tv_copyright = findViewById(R.id.copyright)
+
 
         supportActionBar?.hide()
         setAnimation()
@@ -53,6 +57,7 @@ class SplashActivity : AppCompatActivity() {
         val fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in)
         logo_splashScreen.animation = fadeIn
         text_namaAplikasi.animation = fadeIn
+        tv_copyright.animation = fadeIn
 
     }
 }

@@ -6,12 +6,13 @@
     <string name="pilih_opsi_pengambilan_gambar">Pilih opsi pengambilan gambar :</string>
     <string name="my_smart">MY SMART</string>
     <string name="sollar_panel">SOLLAR PANEL</string>
-    <string name="dense_net_201">Dense-Net 201</string>
-    <string name="efficient_net_b0">Efficient-Net B0</string>
-    <string name="mobile_net_v2">Mobile-Net V2</string>
+    <string name="dense_net_201">Dense-Net</string>
+    <string name="efficient_net_b0">Efficient-Net</string>
+    <string name="mobile_net_v2">Mobile-Net</string>
     <string name="hasil_deteksi_model_xxx">Hasil Deteksi Model XXX</string>
     <string name="deteksi_kerusakan_dengan_model_di_bawah_ini">Deteksi panel dengan model di bawah ini</string>
     <string name="masalah_dirty">Masalah : Dirty</string>
     <string name="batal">Batal</string>
     <string name="kembali">Kembali</string>
+    <string name="made_with">Made with ❤️</string>
 </resources>
