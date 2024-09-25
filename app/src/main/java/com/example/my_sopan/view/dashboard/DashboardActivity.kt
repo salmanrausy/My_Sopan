@@ -32,6 +32,7 @@ import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
 import java.io.File
 
+@Suppress("IMPLICIT_CAST_TO_ANY")
 class DashboardActivity : AppCompatActivity() {
 
     private lateinit var grp_InsertImage : LinearLayout
@@ -41,7 +42,6 @@ class DashboardActivity : AppCompatActivity() {
     private lateinit var btn_mdlEfficientNet : Button
     private lateinit var btn_mdlMobileNet : Button
     private lateinit var btn_Batal : Button
-//    private lateinit var btn_Kembali : Button
     private lateinit var img_imgPreview : ImageView
     private lateinit var tv_judulHasil : TextView
     private lateinit var tv_hasilProses : TextView
@@ -114,13 +114,6 @@ class DashboardActivity : AppCompatActivity() {
             }
         }
 
-//        btn_Kembali.setOnClickListener {
-//            grp_Hasil.visibility = View.GONE
-//            grp_InsertImage.visibility = View.VISIBLE
-//            img_imgPreview.setImageResource(R.drawable.ic_add_image)
-//
-//        }
-
         btn_Batal.setOnClickListener{
             grp_Process.visibility = View.GONE
             grp_Hasil.visibility = View.GONE
@@ -134,7 +127,8 @@ class DashboardActivity : AppCompatActivity() {
             grp_Hasil.visibility = View.VISIBLE
             tv_judulHasil.setText("Hasil Deteksi Model DenseNet")
 
-            processMdlDenseNet()
+//            processMdlDenseNet()
+            processModel(ModelDenseNet201.newInstance(this), "DenseNet")
         }
 
         btn_mdlMobileNet.setOnClickListener{
@@ -142,7 +136,8 @@ class DashboardActivity : AppCompatActivity() {
             grp_Hasil.visibility = View.VISIBLE
             tv_judulHasil.setText("Hasil Deteksi Model MobileNet")
 
-            processMdlMobileNet()
+//            processMdlMobileNet()
+            processModel(ModelMobileNetV2.newInstance(this), "MobileNet")
         }
 
         btn_mdlEfficientNet.setOnClickListener{
@@ -150,7 +145,8 @@ class DashboardActivity : AppCompatActivity() {
             grp_Hasil.visibility = View.VISIBLE
             tv_judulHasil.setText("Hasil Deteksi Model EfficientNet")
 
-            processMdlEfficientNet()
+            processModel(ModelEfficientNetB0.newInstance(this), "EfficientNet")
+//            processMdlEfficientNet()
         }
 
         binding.btnCamera.setOnClickListener {
@@ -163,35 +159,39 @@ class DashboardActivity : AppCompatActivity() {
 //        binding.btnUpload.setOnClickListener { uploadImage() }
     }
 
-    private fun processMdlEfficientNet() {
-        val model = ModelEfficientNetB0.newInstance(this)
-
+    private fun processModel(model: Any, modelName: String) {
         if (getFile != null) {
-            // Muat label model
+            // Load the label model
             val labelsModel = getLabelModel()
 
-            // Siapkan input
+            // Prepare input tensor
             val inputFeature0 = TensorBuffer.createFixedSize(intArrayOf(1, 224, 224, 3), DataType.FLOAT32)
 
-            // Konversi file gambar menjadi bitmap
+            // Convert file to bitmap and resize it
             val bitmap = BitmapFactory.decodeFile(getFile?.path)
             val resize = Bitmap.createScaledBitmap(bitmap, 224, 224, true)
 
-            // Siapkan TensorImage untuk memuat bitmap
+            // Load the bitmap into TensorImage
             val tensorImage = TensorImage(DataType.FLOAT32)
             tensorImage.load(resize)
 
-            // Masukkan input tensor ke buffer
+            // Load input tensor buffer
             inputFeature0.loadBuffer(tensorImage.buffer)
 
-            // Jalankan inferensi dan dapatkan hasilnya
-            val outputs = model.process(inputFeature0)
-            val outputFeature0 = outputs.outputFeature0AsTensorBuffer
+            // Run inference based on model type
+            val outputFeature0 = when (model) {
+                is ModelDenseNet201 -> model.process(inputFeature0).outputFeature0AsTensorBuffer
+                is ModelMobileNetV2 -> model.process(inputFeature0).outputFeature0AsTensorBuffer
+                is ModelEfficientNetB0 -> model.process(inputFeature0).outputFeature0AsTensorBuffer
+                else -> {
+                    throw IllegalArgumentException("Unknown model output type")
+                }
+            }
 
-            // Mengambil array float dari output tensor
+            // Get detection results from output tensor
             val hasilDeteksi = outputFeature0.floatArray
 
-            // Temukan nilai confidence tertinggi
+            // Find the highest confidence result
             var maxIndex = 0
             var maxValue = hasilDeteksi[0]
             for (i in hasilDeteksi.indices) {
@@ -201,120 +201,21 @@ class DashboardActivity : AppCompatActivity() {
                 }
             }
 
-            // Ambil label berdasarkan index hasil deteksi
+            // Get label based on detected result index
             val labelTerpilih = labelsModel[maxIndex]
-            val confidence = maxValue * 100 // Konversi ke persen
+            val confidence = maxValue * 100 // Convert to percentage
 
-            // Tampilkan hasil deteksi dan confidence
+            // Show result in UI
             tv_hasilProses.text = "Masalah: $labelTerpilih\nConfidence: ${"%.2f".format(confidence)}%"
+            tv_judulHasil.text = "Hasil Deteksi Model $modelName"
+            grp_Hasil.visibility = View.VISIBLE
 
-            // Pastikan untuk menutup model setelah digunakan
-            model.close()
-        } else {
-            Toast.makeText(this, "Masukkan gambar terlebih dahulu", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-
-    private fun processMdlMobileNet() {
-        val model = ModelMobileNetV2.newInstance(this)
-
-        if (getFile != null) {
-            // Muat label model
-            val labelsModel = getLabelModel()
-
-            // Siapkan input
-            val inputFeature0 = TensorBuffer.createFixedSize(intArrayOf(1, 224, 224, 3), DataType.FLOAT32)
-
-            // Konversi file gambar menjadi bitmap
-            val bitmap = BitmapFactory.decodeFile(getFile?.path)
-            val resize = Bitmap.createScaledBitmap(bitmap, 224, 224, true)
-
-            // Siapkan TensorImage untuk memuat bitmap
-            val tensorImage = TensorImage(DataType.FLOAT32)
-            tensorImage.load(resize)
-
-            // Masukkan input tensor ke buffer
-            inputFeature0.loadBuffer(tensorImage.buffer)
-
-            // Jalankan inferensi dan dapatkan hasilnya
-            val outputs = model.process(inputFeature0)
-            val outputFeature0 = outputs.outputFeature0AsTensorBuffer
-
-            // Mengambil array float dari output tensor
-            val hasilDeteksi = outputFeature0.floatArray
-
-            // Temukan nilai confidence tertinggi
-            var maxIndex = 0
-            var maxValue = hasilDeteksi[0]
-            for (i in hasilDeteksi.indices) {
-                if (hasilDeteksi[i] > maxValue) {
-                    maxValue = hasilDeteksi[i]
-                    maxIndex = i
-                }
+            // Close the model after inference
+            when (model) {
+                is ModelDenseNet201 -> model.close()
+                is ModelMobileNetV2 -> model.close()
+                is ModelEfficientNetB0 -> model.close()
             }
-
-            // Ambil label berdasarkan index hasil deteksi
-            val labelTerpilih = labelsModel[maxIndex]
-            val confidence = maxValue * 100 // Konversi ke persen
-
-            // Tampilkan hasil deteksi dan confidence
-            tv_hasilProses.text = "Masalah: $labelTerpilih\nConfidence: ${"%.2f".format(confidence)}%"
-
-            // Pastikan untuk menutup model setelah digunakan
-            model.close()
-        } else {
-            Toast.makeText(this, "Masukkan gambar terlebih dahulu", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun processMdlDenseNet() {
-        val model = ModelDenseNet201.newInstance(this)
-
-        if (getFile != null) {
-            // Muat label model
-            val labelsModel = getLabelModel()
-
-            // Siapkan input
-            val inputFeature0 = TensorBuffer.createFixedSize(intArrayOf(1, 224, 224, 3), DataType.FLOAT32)
-
-            // Konversi file gambar menjadi bitmap
-            val bitmap = BitmapFactory.decodeFile(getFile?.path)
-            val resize = Bitmap.createScaledBitmap(bitmap, 224, 224, true)
-
-            // Siapkan TensorImage untuk memuat bitmap
-            val tensorImage = TensorImage(DataType.FLOAT32)
-            tensorImage.load(resize)
-
-            // Masukkan input tensor ke buffer
-            inputFeature0.loadBuffer(tensorImage.buffer)
-
-            // Jalankan inferensi dan dapatkan hasilnya
-            val outputs = model.process(inputFeature0)
-            val outputFeature0 = outputs.outputFeature0AsTensorBuffer
-
-            // Mengambil array float dari output tensor
-            val hasilDeteksi = outputFeature0.floatArray
-
-            // Temukan nilai confidence tertinggi
-            var maxIndex = 0
-            var maxValue = hasilDeteksi[0]
-            for (i in hasilDeteksi.indices) {
-                if (hasilDeteksi[i] > maxValue) {
-                    maxValue = hasilDeteksi[i]
-                    maxIndex = i
-                }
-            }
-
-            // Ambil label berdasarkan index hasil deteksi
-            val labelTerpilih = labelsModel[maxIndex]
-            val confidence = maxValue * 100 // Konversi ke persen
-
-            // Tampilkan hasil deteksi dan confidence
-            tv_hasilProses.text = "Masalah: $labelTerpilih\nConfidence: ${"%.2f".format(confidence)}%"
-
-            // Pastikan untuk menutup model setelah digunakan
-            model.close()
         } else {
             Toast.makeText(this, "Masukkan gambar terlebih dahulu", Toast.LENGTH_SHORT).show()
         }
