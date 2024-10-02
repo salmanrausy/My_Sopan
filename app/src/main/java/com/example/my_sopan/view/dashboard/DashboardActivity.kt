@@ -175,8 +175,13 @@ class DashboardActivity : AppCompatActivity() {
             val tensorImage = TensorImage(DataType.FLOAT32)
             tensorImage.load(resize)
 
-            // Load input tensor buffer
-            inputFeature0.loadBuffer(tensorImage.buffer)
+            // Rescale the pixel values to [0, 1] range
+            val tensorBuffer = tensorImage.tensorBuffer
+            val pixelArray = tensorBuffer.floatArray
+            for (i in pixelArray.indices) {
+                pixelArray[i] = pixelArray[i] / 255.0f
+            }
+            inputFeature0.loadArray(pixelArray)
 
             // Run inference based on model type
             val outputFeature0 = when (model) {
@@ -220,6 +225,7 @@ class DashboardActivity : AppCompatActivity() {
             Toast.makeText(this, "Masukkan gambar terlebih dahulu", Toast.LENGTH_SHORT).show()
         }
     }
+
 
     private fun getLabelModel(): List<String> {
         val inputString = this.assets.open("labelML.txt").bufferedReader().use {
