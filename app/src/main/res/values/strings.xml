@@ -12,7 +12,7 @@
     <string name="hasil_deteksi_model_xxx">Hasil Deteksi Model XXX</string>
     <string name="deteksi_kerusakan_dengan_model_di_bawah_ini">Deteksi panel dengan model di bawah ini</string>
     <string name="masalah_dirty">Masalah : Dirty</string>
-    <string name="batal">Batal</string>
     <string name="kembali">Kembali</string>
     <string name="made_with">Made with ❤️</string>
+    <string name="pilih_gambar_lain"><u>Pilih Gambar Lain</u>.</string>
 </resources>

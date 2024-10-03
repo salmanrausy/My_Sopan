@@ -10,12 +10,15 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -31,6 +34,7 @@ import org.tensorflow.lite.DataType
 import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
 import java.io.File
+import kotlin.system.exitProcess
 
 @Suppress("IMPLICIT_CAST_TO_ANY")
 class DashboardActivity : AppCompatActivity() {
@@ -41,10 +45,14 @@ class DashboardActivity : AppCompatActivity() {
     private lateinit var btn_mdlDenseNet : Button
     private lateinit var btn_mdlEfficientNet : Button
     private lateinit var btn_mdlMobileNet : Button
-    private lateinit var btn_Batal : Button
+    private lateinit var btn_Kembali : Button
+    private lateinit var tv_PilihGambarLain : TextView
     private lateinit var img_imgPreview : ImageView
     private lateinit var tv_judulHasil : TextView
     private lateinit var tv_hasilProses : TextView
+    private lateinit var btn_exit : ImageButton
+
+    var backPressedTime: Long = 0
 
     private var _binding: ActivityDashboardBinding? = null
     private val binding get() = _binding!!
@@ -92,17 +100,19 @@ class DashboardActivity : AppCompatActivity() {
         grp_Process = binding.groupProses
         grp_Hasil = binding.groupHasil
         grp_InsertImage = binding.groupButton
-        btn_Batal = binding.btnBatal
-//        btn_Kembali = binding.btnKembali
+        btn_Kembali = binding.btnKembali
+        tv_PilihGambarLain = binding.tvPilihGambarLain
         btn_mdlDenseNet = binding.btnModelDenseNet
         btn_mdlEfficientNet = binding.btnModelEfficientNet
         btn_mdlMobileNet = binding.btnModelMobileNet
         img_imgPreview = binding.previewImageView
         tv_judulHasil = binding.tvHasilModelJudul
         tv_hasilProses = binding.tvHasilKerusakan
+        btn_exit = binding.btnExit
 
         grp_Process.visibility = View.GONE
         grp_Hasil.visibility = View.GONE
+        tv_PilihGambarLain.visibility = View.GONE
 
         this.let {
             if (!allPermissionsGranted()) {
@@ -114,7 +124,23 @@ class DashboardActivity : AppCompatActivity() {
             }
         }
 
-        btn_Batal.setOnClickListener{
+        val callback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
+            // This function is called automatically when the inbuilt back button is pressed
+            override fun handleOnBackPressed() {
+                //
+                // Checks whether the time elapsed between two consecutive back button presses is less than 3 seconds.
+                if (backPressedTime + 3000 > System.currentTimeMillis()) {
+                    finish()
+                } else {
+                    Toast.makeText(this@DashboardActivity, "Press back again to leave the app.", Toast.LENGTH_LONG).show()
+                }
+                backPressedTime = System.currentTimeMillis()
+            }
+        }
+
+        onBackPressedDispatcher.addCallback(this, callback)
+
+        btn_Kembali.setOnClickListener{
             grp_Process.visibility = View.GONE
             grp_Hasil.visibility = View.GONE
             grp_InsertImage.visibility = View.VISIBLE
@@ -122,9 +148,33 @@ class DashboardActivity : AppCompatActivity() {
 
         }
 
+        btn_exit.setOnClickListener {
+            val mBuilder = AlertDialog.Builder(this)
+                .setTitle("Konfirmasi")
+                .setMessage("Apakah anda yakin ingin keluar?")
+                .setPositiveButton("Ya", null)
+                .setNegativeButton("Tidak", null)
+                .show()
+
+            // Function for the positive button
+            // is programmed to exit the application
+            val mPositiveButton = mBuilder.getButton(AlertDialog.BUTTON_POSITIVE)
+            mPositiveButton.setOnClickListener {
+                exitProcess(0)
+            }
+        }
+
+        tv_PilihGambarLain.setOnClickListener{
+            grp_InsertImage.visibility = View.VISIBLE
+            img_imgPreview.setImageResource(R.drawable.ic_add_image)
+            grp_Process.visibility = View.GONE
+            tv_PilihGambarLain.visibility = View.GONE
+        }
+
         btn_mdlDenseNet.setOnClickListener{
 //            grp_Process.visibility = View.GONE
             grp_Hasil.visibility = View.VISIBLE
+            tv_PilihGambarLain.visibility = View.GONE
             tv_judulHasil.setText("Hasil Deteksi Model DenseNet")
 
 //            processMdlDenseNet()
@@ -134,6 +184,7 @@ class DashboardActivity : AppCompatActivity() {
         btn_mdlMobileNet.setOnClickListener{
 //            grp_Process.visibility = View.GONE
             grp_Hasil.visibility = View.VISIBLE
+            tv_PilihGambarLain.visibility = View.GONE
             tv_judulHasil.setText("Hasil Deteksi Model MobileNet")
 
 //            processMdlMobileNet()
@@ -143,6 +194,7 @@ class DashboardActivity : AppCompatActivity() {
         btn_mdlEfficientNet.setOnClickListener{
 //            grp_Process.visibility = View.GONE
             grp_Hasil.visibility = View.VISIBLE
+            tv_PilihGambarLain.visibility = View.GONE
             tv_judulHasil.setText("Hasil Deteksi Model EfficientNet")
 
             processModel(ModelEfficientNetB0.newInstance(this), "EfficientNet")
@@ -256,6 +308,7 @@ class DashboardActivity : AppCompatActivity() {
                     binding.previewImageView.setImageURI(uri)
                     grp_InsertImage.visibility = View.GONE
                     grp_Process.visibility = View.VISIBLE
+                    tv_PilihGambarLain.visibility = View.VISIBLE
                 }
             }
         }
@@ -287,6 +340,7 @@ class DashboardActivity : AppCompatActivity() {
                 binding.previewImageView.setImageBitmap(BitmapFactory.decodeFile(file.path))
                 grp_InsertImage.visibility = View.GONE
                 grp_Process.visibility = View.VISIBLE
+                tv_PilihGambarLain.visibility = View.VISIBLE
             }
         }
     }
