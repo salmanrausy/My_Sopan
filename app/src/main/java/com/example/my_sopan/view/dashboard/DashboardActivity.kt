@@ -24,9 +24,12 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.my_sopan.R
 import com.example.my_sopan.databinding.ActivityDashboardBinding // Pastikan kelas binding ini diimpor
-import com.example.my_sopan.ml.ModelDenseNet201
-import com.example.my_sopan.ml.ModelEfficientNetB0
-import com.example.my_sopan.ml.ModelMobileNetV2
+import com.example.my_sopan.ml.DenseNet201
+import com.example.my_sopan.ml.EfficientNetB0
+import com.example.my_sopan.ml.MobileNetV2
+//import com.example.my_sopan.ml.ModelDenseNet201
+//import com.example.my_sopan.ml.ModelEfficientNetB0
+//import com.example.my_sopan.ml.ModelMobileNetV2
 import com.example.my_sopan.utils.rotateFile
 import com.example.my_sopan.utils.uriToFile
 import com.example.my_sopan.view.camera.CameraActivity
@@ -178,7 +181,7 @@ class DashboardActivity : AppCompatActivity() {
             tv_judulHasil.setText("Hasil Deteksi Model DenseNet")
 
 //            processMdlDenseNet()
-            processModel(ModelDenseNet201.newInstance(this), "DenseNet")
+            processModel(DenseNet201.newInstance(this), "DenseNet")
         }
 
         btn_mdlMobileNet.setOnClickListener{
@@ -188,7 +191,7 @@ class DashboardActivity : AppCompatActivity() {
             tv_judulHasil.setText("Hasil Deteksi Model MobileNet")
 
 //            processMdlMobileNet()
-            processModel(ModelMobileNetV2.newInstance(this), "MobileNet")
+            processModel(MobileNetV2.newInstance(this), "MobileNet")
         }
 
         btn_mdlEfficientNet.setOnClickListener{
@@ -197,7 +200,7 @@ class DashboardActivity : AppCompatActivity() {
             tv_PilihGambarLain.visibility = View.GONE
             tv_judulHasil.setText("Hasil Deteksi Model EfficientNet")
 
-            processModel(ModelEfficientNetB0.newInstance(this), "EfficientNet")
+            processModel(EfficientNetB0.newInstance(this), "EfficientNet")
 //            processMdlEfficientNet()
         }
 
@@ -237,9 +240,9 @@ class DashboardActivity : AppCompatActivity() {
 
             // Run inference based on model type
             val outputFeature0 = when (model) {
-                is ModelDenseNet201 -> model.process(inputFeature0).outputFeature0AsTensorBuffer
-                is ModelMobileNetV2 -> model.process(inputFeature0).outputFeature0AsTensorBuffer
-                is ModelEfficientNetB0 -> model.process(inputFeature0).outputFeature0AsTensorBuffer
+                is DenseNet201 -> model.process(inputFeature0).outputFeature0AsTensorBuffer
+                is MobileNetV2 -> model.process(inputFeature0).outputFeature0AsTensorBuffer
+                is EfficientNetB0 -> model.process(inputFeature0).outputFeature0AsTensorBuffer
                 else -> {
                     throw IllegalArgumentException("Unknown model output type")
                 }
@@ -269,9 +272,9 @@ class DashboardActivity : AppCompatActivity() {
 
             // Close the model after inference
             when (model) {
-                is ModelDenseNet201 -> model.close()
-                is ModelMobileNetV2 -> model.close()
-                is ModelEfficientNetB0 -> model.close()
+                is DenseNet201 -> model.close()
+                is MobileNetV2 -> model.close()
+                is EfficientNetB0 -> model.close()
             }
         } else {
             Toast.makeText(this, "Masukkan gambar terlebih dahulu", Toast.LENGTH_SHORT).show()
