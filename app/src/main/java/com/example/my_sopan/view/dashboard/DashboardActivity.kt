@@ -147,8 +147,9 @@ class DashboardActivity : AppCompatActivity() {
             grp_Process.visibility = View.GONE
             grp_Hasil.visibility = View.GONE
             grp_InsertImage.visibility = View.VISIBLE
-            img_imgPreview.setImageResource(R.drawable.ic_add_image)
 
+            clearImageData()
+            img_imgPreview.setImageResource(R.drawable.ic_add_image)
         }
 
         btn_exit.setOnClickListener {
@@ -169,9 +170,11 @@ class DashboardActivity : AppCompatActivity() {
 
         tv_PilihGambarLain.setOnClickListener{
             grp_InsertImage.visibility = View.VISIBLE
-            img_imgPreview.setImageResource(R.drawable.ic_add_image)
             grp_Process.visibility = View.GONE
             tv_PilihGambarLain.visibility = View.GONE
+
+            clearImageData()
+            img_imgPreview.setImageResource(R.drawable.ic_add_image)
         }
 
         btn_mdlDenseNet.setOnClickListener{
@@ -212,6 +215,11 @@ class DashboardActivity : AppCompatActivity() {
             startGallery()
         }
 //        binding.btnUpload.setOnClickListener { uploadImage() }
+    }
+
+    private fun clearImageData() {
+        img_imgPreview.setImageDrawable(null)
+        getFile = null
     }
 
     private fun processModel(model: Any, modelName: String) {
